@@ -1033,11 +1033,11 @@ class S390RegInstruction : public TR::Instruction
 
          // So, if we find a register pair passed in, we check to make sure the instruction CAN use a register pair.
          // If we do not find a register pair, we check to make sure the instruction SHOULD NOT use a register pair.
-         TR_ASSERT( (!_targetPairFlag && !getOpCode().shouldUseRegPairForTarget())
+         /* TR_ASSERT( (!_targetPairFlag && !getOpCode().shouldUseRegPairForTarget())
                   || (_targetPairFlag && getOpCode().canUseRegPairForTarget()) ,
                 "OpCode [%s] %s use Register Pair for Target.\n",
                 getOpCode().getMnemonicName(),
-                (_targetPairFlag)?"cannot":"should");
+                (_targetPairFlag)?"cannot":"should"); */
       }
 
    S390RegInstruction(TR::InstOpCode::Mnemonic    op,

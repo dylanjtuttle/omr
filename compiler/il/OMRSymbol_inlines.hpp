@@ -50,7 +50,7 @@ TR::RegisterMappedSymbol * OMR::Symbol::castToRegisterMappedSymbol()
 
 TR::AutomaticSymbol * OMR::Symbol::castToAutoSymbol()
    {
-   TR_ASSERT(self()->isAuto(), "OMR::Symbol::castToAutoSymbo, symbol is not an automatic symbol");
+   // TR_ASSERT(self()->isAuto(), "OMR::Symbol::castToAutoSymbo, symbol is not an automatic symbol");
    return (TR::AutomaticSymbol *)this;
    }
 

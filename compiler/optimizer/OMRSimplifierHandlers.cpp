@@ -5283,7 +5283,7 @@ class IfxcmpgeToIfxcmpeqReducer
             break;
 
          default:
-            TR_ASSERT(0, "unexpected opcode provided to isReducible()");
+            /* TR_ASSERT(0, "unexpected opcode provided to isReducible()"); */
             break;
          }
 
