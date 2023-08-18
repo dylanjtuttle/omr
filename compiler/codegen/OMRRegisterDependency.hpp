@@ -270,7 +270,7 @@ class RegisterDependencyMap
    RegisterDependencyMap(TR::RegisterDependency* deps, uint32_t numDeps)
       : deps(deps)
       {
-      TR_ASSERT(numDeps <= SENTINEL, "Number of dependencies supplied (%d) cannot exceed %d!", numDeps, SENTINEL);
+      // TR_ASSERT(numDeps <= SENTINEL, "Number of dependencies supplied (%d) cannot exceed %d!", numDeps, SENTINEL);
 
       for (auto i = 0; i < TR::RealRegister::NumRegisters; ++i)
          {

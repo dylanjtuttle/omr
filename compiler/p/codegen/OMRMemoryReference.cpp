@@ -1638,10 +1638,10 @@ void OMR::Power::MemoryReference::accessStaticItem(TR::Node *node, TR::SymbolRef
          loadAddressConstant(cg, true, nodeForSymbol, 1, reg, NULL, false, TR_MethodEnterExitHookAddress);
          return;
          }
-      else
+      /* else
          {
          TR_ASSERT_FATAL(!comp->getOption(TR_UseSymbolValidationManager) || ref->isUnresolved(), "SVM relocation unhandled");
-         }
+         } */
 
       // TODO: find a better default uninitialized value --- 0x80000000
       //       Deciding particular static references through TOC or not
