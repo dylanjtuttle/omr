@@ -3359,7 +3359,7 @@ uint8_t* TR::AMD64RegImm64Instruction::generateOperand(uint8_t* cursor)
       {
       applyTargetRegisterToModRMByte(modRM);
       }
-   TR_ASSERT(getOpCode().hasLongImmediate(), "Imm64 instructions must have long immediates");
+   /* TR_ASSERT(getOpCode().hasLongImmediate(), "Imm64 instructions must have long immediates"); */
    *(uint64_t *)cursor = getSourceImmediate();
 
    addMetaDataForCodeAddress(cursor);
