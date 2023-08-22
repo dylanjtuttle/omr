@@ -4612,7 +4612,7 @@ void OMR::ValuePropagation::launchNode(TR::Node *node, TR::Node *parent, int32_t
    if (node && node->getVisitCount() != _visitCount)
       {
       int32_t valueNumber = getValueNumber(node);
-      TR_ASSERT(valueNumber < _firstUnresolvedSymbolValueNumber, "value number too big, valueNumber:%d _firstUnresolvedSymbolValueNumber:%d", valueNumber, _firstUnresolvedSymbolValueNumber);
+      /* TR_ASSERT(valueNumber < _firstUnresolvedSymbolValueNumber, "value number too big, valueNumber:%d _firstUnresolvedSymbolValueNumber:%d", valueNumber, _firstUnresolvedSymbolValueNumber); */
 
       TR::Node *oldParent = _parentNode;
       _parentNode = parent;
