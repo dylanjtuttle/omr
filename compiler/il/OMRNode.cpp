@@ -4483,6 +4483,12 @@ OMR::Node::setEvaluationPriority(int32_t p)
       {
       _unionA._register = (TR::Register*)(uintptr_t)((p << 1) | 1);
       }
+      else
+      {
+      printf("setEvaluationPriority: node (n%un), opcode is %s, node %s\n", self()->getGlobalIndex(), self()->getOpCode().getName(), self()->getOpCode().isTreeTop() ? "is a tree top" : "is NOT a tree top");
+      // traceMsg(TR::comp(), "setEvaluationPriority: node (n%un), opcode is %s, node %s\n", self()->getGlobalIndex(), self()->getOpCode().getName(), self()->getOpCode().isTreeTop() ? "is a tree top" : "is NOT a tree top");
+      // TR_ASSERT(0, "setEvaluationPriority cannot be called after the node (n%un) has already been evaluated, opcode is %s, node %s", self()->getGlobalIndex(), self()->getOpCode().getName(), self()->getOpCode().isTreeTop() ? "is a tree top" : "is NOT a tree top");
+      }
    /* else // evaluated into a register
       {
       TR_ASSERT(0, "setEvaluationPriority cannot be called after the node has already been evaluated");

@@ -295,7 +295,10 @@ OMR::CodeGenerator::whichChildToEvaluate(TR::Node * node)
          }
       }
 
-   node->setEvaluationPriority(nodePriority);
+   if (!node->getOpCode().isIf() && !node->getOpCode().isTreeTop())
+      {
+      node->setEvaluationPriority(nodePriority);
+      }
    return bestChild;
    }
 
