@@ -50,7 +50,7 @@ class SimpleRegex
 
    // Create a new regular expression
    //
-   static SimpleRegex *create(char *&s);
+   static SimpleRegex *create(char * & s);
 
    // Check whether a string matches this regular expression
    //
@@ -147,7 +147,7 @@ class SimpleRegex
 
    // Length and pointer to the original string that the regex was parsed from
    size_t _regexStrLen;
-   char *_regexStr;
+   const char *_regexStr;
    };
 
 }
