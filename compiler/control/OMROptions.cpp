@@ -92,7 +92,7 @@ using namespace OMR;
 #define TR_PERFORM_INLINE_BLOCK_EXPANSION 0
 
 
-static char * EXCLUDED_METHOD_OPTIONS_PREFIX = "ifExcluded";
+static const char *EXCLUDED_METHOD_OPTIONS_PREFIX = "ifExcluded";
 
 #if defined(LINUX)
 #pragma GCC diagnostic push
@@ -1321,7 +1321,7 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
 #endif
 
 int64_t
-OMR::Options::getNumericValue(char * & option)
+OMR::Options::getNumericValue(char *& option)
    {
    /* The natural way to implement operations might be to recurse to process
     * the right-hand number.  However, in a sequence of operations, that would
@@ -1336,7 +1336,7 @@ OMR::Options::getNumericValue(char * & option)
       int64_t current = 0;
       while (isdigit(*option))
          {
-         current = 10*current + *option - '0';
+         current = 10 * current + *option - '0';
          option++;
          }
       switch (pendingOperation)
@@ -1375,31 +1375,35 @@ static uintptr_t getHexadecimalValue(char * & option)
    }
 
 
-char *
-OMR::Options::setNumeric(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((intptr_t*)((char*)base+entry->parm1)) = (intptr_t)TR::Options::getNumericValue(option);
+   char *tempOption = (char *)option;
+   *((intptr_t*)((char*)base+entry->parm1)) = (intptr_t)TR::Options::getNumericValue(tempOption);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::set32BitNumeric(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set32BitNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((int32_t*)((char*)base+entry->parm1)) = (int32_t)TR::Options::getNumericValue(option);
+   char *tempOption = (char *)option;
+   *((int32_t*)((char*)base+entry->parm1)) = (int32_t)TR::Options::getNumericValue(tempOption);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::set32BitNumericInJitConfig(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set32BitNumericInJitConfig(const char *option, void *base, TR::OptionTable *entry)
    {
    return TR::Options::set32BitNumeric(option, _feBase, entry);
    }
 
 
-char *
-OMR::Options::set64BitSignedNumeric(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set64BitSignedNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
    int64_t sign = 1;
    if (*option == '-')
@@ -1407,21 +1411,25 @@ OMR::Options::set64BitSignedNumeric(char *option, void *base, TR::OptionTable *e
       sign = -1;
       option++;
       }
-   *((int64_t*)((char*)base+entry->parm1)) = sign * TR::Options::getNumericValue(option);
+   char *tempOption = (char *)option;
+   *((int64_t*)((char*)base+entry->parm1)) = sign * TR::Options::getNumericValue(tempOption);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::set32BitHexadecimal(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set32BitHexadecimal(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((int32_t*)((char*)base+entry->parm1)) = static_cast<int32_t>(getHexadecimalValue(option));
+   char *tempOption = (char *)option;
+   *((int32_t*)((char*)base+entry->parm1)) = static_cast<int32_t>(getHexadecimalValue(tempOption));
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::set32BitSignedNumeric(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set32BitSignedNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
    int32_t sign = 1;
    if (*option == '-')
@@ -1429,51 +1437,59 @@ OMR::Options::set32BitSignedNumeric(char *option, void *base, TR::OptionTable *e
       sign = -1;
       option++;
       }
-   *((int32_t*)((char*)base+entry->parm1)) = sign * static_cast<int32_t>(TR::Options::getNumericValue(option));
+   char *tempOption = (char *)option;
+   *((int32_t*)((char*)base+entry->parm1)) = sign * static_cast<int32_t>(TR::Options::getNumericValue(tempOption));
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::setStaticNumeric(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((int32_t*)entry->parm1) = (int32_t)TR::Options::getNumericValue(option);
+   char *tempOption = (char *)option;
+   *((int32_t*)entry->parm1) = (int32_t)TR::Options::getNumericValue(tempOption);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::setStaticNumericKBAdjusted(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticNumericKBAdjusted(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((size_t*)entry->parm1) = (size_t) (TR::Options::getNumericValue(option) * 1024);
+   char *tempOption = (char *)option;
+   *((size_t*)entry->parm1) = (size_t) (TR::Options::getNumericValue(tempOption) * 1024);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::setStaticHexadecimal(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticHexadecimal(const char *option, void *base, TR::OptionTable *entry)
    {
-   *((uintptr_t*)entry->parm1) = getHexadecimalValue(option);
+   char *tempOption = (char *)option;
+   *((uintptr_t*)entry->parm1) = getHexadecimalValue(tempOption);
+   option = tempOption;
    return option;
    }
 
 
-char *
-OMR::Options::setStatic32BitValue(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStatic32BitValue(const char *option, void *base, TR::OptionTable *entry)
    {
    *((int32_t*)((char*)entry->parm1)) = (int32_t)entry->parm2;
    return option;
    }
 
 
-static char *dummy_string = "dummy";
+static const char *dummy_string = "dummy";
 
-char *
-OMR::Options::setString(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setString(const char *option, void *base, TR::OptionTable *entry)
    {
    char *p;
    int32_t parenNest = 0;
-   for (p = option; *p; p++)
+   for (p = (char *)option; *p; p++)
       {
       if (*p == ',')
          break;
@@ -1498,14 +1514,14 @@ OMR::Options::setString(char *option, void *base, TR::OptionTable *entry)
    return dummy_string;
    }
 
-char *
-OMR::Options::setStringInJitConfig(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStringInJitConfig(const char *option, void *base, TR::OptionTable *entry)
    {
    return TR::Options::setString(option, _feBase, entry);
    }
 
-char *
-OMR::Options::setStringForPrivateBase(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStringForPrivateBase(const char *option, void *base, TR::OptionTable *entry)
    {
 #ifdef J9_PROJECT_SPECIFIC
    base = TR_J9VMBase::getPrivateConfig(_feBase);
@@ -1516,15 +1532,15 @@ OMR::Options::setStringForPrivateBase(char *option, void *base, TR::OptionTable 
    }
 
 
-char *
-OMR::Options::setStaticString(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticString(const char *option, void *base, TR::OptionTable *entry)
    {
    return TR::Options::setString(option, 0, entry);
    }
 
 
-char *
-OMR::Options::setDebug(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setDebug(const char *option, void *base, TR::OptionTable *entry)
    {
    if(strcmp((char*)entry->name,"trdebug="))
       {
@@ -1533,7 +1549,7 @@ OMR::Options::setDebug(char *option, void *base, TR::OptionTable *entry)
       }
    else
       {
-      char * position = option;
+      char *position = (char *)option;
       if(*position == '{')
          {
          for(;*position;++position)
@@ -1565,10 +1581,12 @@ OMR::Options::setDebug(char *option, void *base, TR::OptionTable *entry)
    }
 
 
-char *
-OMR::Options::setRegex(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setRegex(const char *option, void *base, TR::OptionTable *entry)
    {
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+   char *tempOption = (char *)option;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+   option = tempOption;
    *((TR::SimpleRegex**)((char*)base+entry->parm1)) = regex;
    if (!regex)
       TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE,"Bad regular expression at --> '%s'", option);
@@ -1576,10 +1594,12 @@ OMR::Options::setRegex(char *option, void *base, TR::OptionTable *entry)
    }
 
 
-char *
-OMR::Options::setStaticRegex(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticRegex(const char *option, void *base, TR::OptionTable *entry)
    {
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+   char *tempOption = (char *)option;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+   option = tempOption;
    *((TR::SimpleRegex**)entry->parm1) = regex;
    if (!regex)
       TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
@@ -1652,8 +1672,8 @@ int32_t       OMR::Options::_highCodeCacheOccupancyPercentage = 75; // in the ra
 int32_t       OMR::Options::_queueWeightThresholdForAppThreadYield = -1; // not yet set
 int32_t       OMR::Options::_queueWeightThresholdForStarvation = -1; // not yet set
 
-uint32_t       OMR::Options::_memExpensiveCompThreshold = 0; // not initialized
-uint32_t       OMR::Options::_cpuExpensiveCompThreshold = 0; // not initialized
+uint32_t      OMR::Options::_memExpensiveCompThreshold = 0; // not initialized
+uint32_t      OMR::Options::_cpuExpensiveCompThreshold = 0; // not initialized
 int32_t       OMR::Options::_deterministicMode = -1; // -1 means we're not in any deterministic mode
 int32_t       OMR::Options::_maxPeekedBytecodeSize = 100000;
 
@@ -1686,7 +1706,7 @@ int32_t       OMR::Options::_highCodeCacheOccupancyBCount = 10000;
 bool          OMR::Options::_sharedClassCache=false;
 
 TR::OptionSet *OMR::Options::_currentOptionSet = NULL;
-char *        OMR::Options::_compilationStrategyName = "default";
+const char *   OMR::Options::_compilationStrategyName = "default";
 
 bool          OMR::Options::_optionsTablesValidated = false;
 
@@ -1949,7 +1969,7 @@ OMR::Options::realTimeGC()
    return self()->getOption(TR_RealTimeGC);
    }
 
-char *
+const char *
 OMR::Options::latePostProcessJIT(void *jitConfig)
    {
    if (_jitCmdLineOptions)
@@ -1958,7 +1978,7 @@ OMR::Options::latePostProcessJIT(void *jitConfig)
    }
 
 
-char *
+const char *
 OMR::Options::latePostProcessAOT(void *jitConfig)
    {
    if (_aotCmdLineOptions)
@@ -1967,7 +1987,7 @@ OMR::Options::latePostProcessAOT(void *jitConfig)
    }
 
 
-char *
+const char *
 OMR::Options::latePostProcess(TR::Options *options, void *jitConfig, bool isAOT)
    {
    char * rc = 0;
@@ -1993,7 +2013,7 @@ OMR::Options::latePostProcess(TR::Options *options, void *jitConfig, bool isAOT)
       // Get the option string before clobbering it with the options object
       //
       _currentOptionSet = optionSet;
-      char *subOpts = optionSet->getOptionString();
+      const char *subOpts = optionSet->getOptionString();
       TR::Options *newOptions = new (PERSISTENT_NEW) TR::Options(*options);
       if (newOptions)
          {
@@ -2431,8 +2451,8 @@ OMR::Options::jitLatePostProcess(TR::OptionSet *optionSet, void * jitConfig)
 
 
 // The string passed in as options should be from the -Xjit option
-char *
-OMR::Options::processOptionsJIT(char *jitOptions, void *feBase, TR_FrontEnd *fe)
+const char *
+OMR::Options::processOptionsJIT(const char *jitOptions, void *feBase, TR_FrontEnd *fe)
    {
    // Create the default JIT command line options object
    // only do this if this the first time around we're processing options
@@ -2464,7 +2484,7 @@ OMR::Options::processOptionsJIT(char *jitOptions, void *feBase, TR_FrontEnd *fe)
 
       _jitCmdLineOptions->jitPreProcess();
 
-      char *rc = TR::Options::processOptions(jitOptions, envOptions, feBase, fe, _jitCmdLineOptions);
+      const char *rc = TR::Options::processOptions(jitOptions, envOptions, feBase, fe, _jitCmdLineOptions);
 
       _processOptionsStatus |= (NULL == rc)?TR_JITProcessedOK : TR_JITProcessErrorJITOpts;
       return rc;
@@ -2476,8 +2496,8 @@ OMR::Options::processOptionsJIT(char *jitOptions, void *feBase, TR_FrontEnd *fe)
 
 
 // The string passed in as options should be from the -Xaot option
-char *
-OMR::Options::processOptionsAOT(char *aotOptions, void *feBase, TR_FrontEnd *fe)
+const char *
+OMR::Options::processOptionsAOT(const char *aotOptions, void *feBase, TR_FrontEnd *fe)
    {
    // Create the default AOT command line options object
    // only do this if this the first time around we're processing options
@@ -2502,7 +2522,7 @@ OMR::Options::processOptionsAOT(char *aotOptions, void *feBase, TR_FrontEnd *fe)
       _aotCmdLineOptions->jitPreProcess();
 
       static char *envOptions = feGetEnv("TR_OptionsAOT");
-      char* rc = TR::Options::processOptions(aotOptions, envOptions, feBase, fe, _aotCmdLineOptions);
+      const char *rc = TR::Options::processOptions(aotOptions, envOptions, feBase, fe, _aotCmdLineOptions);
 
       _processOptionsStatus |= (NULL == rc)?TR_AOTProcessedOK : TR_AOTProcessErrorAOTOpts;
       return rc;
@@ -2677,7 +2697,7 @@ OMR::Options::jitPreProcess()
    _lastIpaOptTransformationIndex = INT_MAX;
    _jProfilingMethodRecompThreshold = 4000;
    _jProfilingLoopRecompThreshold = 2000;
-   _blockShufflingSequence = "S";
+   _blockShufflingSequence = (char *)"S";
    _delayCompileWithCPUBurn = 0;
    _largeNumberOfLoops = 6500;
 
@@ -3123,11 +3143,11 @@ void OMR::Options::setOptionInAllOptionSets(uint32_t mask, bool b)
    }
 
 
-char *
+const char *
 OMR::Options::getDefaultOptions()
    {
    if (TR::Compiler->target.cpu.isX86() || TR::Compiler->target.cpu.isPower() || TR::Compiler->target.cpu.isARM() || TR::Compiler->target.cpu.isARM64())
-      return (char *) ("samplingFrequency=2");
+      return "samplingFrequency=2";
 
    if (TR::Compiler->target.cpu.isZ())
       return "samplingFrequency=2,numInterfaceCallCacheSlots=4";
@@ -3213,10 +3233,10 @@ OMR::Options::validateOptionsTables(void *feBase, TR_FrontEnd *fe)
    }
 
 
-char *
+const char *
 OMR::Options::processOptions(
-      char *options,
-      char *envOptions,
+      const char *options,
+      const char *envOptions,
       void *feBase,
       TR_FrontEnd *fe,
       TR::Options *cmdLineOptions)
@@ -3239,8 +3259,8 @@ OMR::Options::processOptions(
    }
 
 
-char *
-OMR::Options::processOptions(char * options, char * envOptions, TR::Options *cmdLineOptions)
+const char *
+OMR::Options::processOptions(const char *options, const char *envOptions, TR::Options *cmdLineOptions)
    {
    // Process the main options - option sets found will be skipped and their
    // addresses saved in the following array, then processed after the main
@@ -3274,10 +3294,10 @@ OMR::Options::processOptions(char * options, char * envOptions, TR::Options *cmd
    }
 
 
-char *
+const char *
 OMR::Options::processOptionSet(
-      char *options,
-      char *envOptions,
+      const char *options,
+      const char *envOptions,
       TR::Options *jitBase,
       bool isAOT)
    {
@@ -3289,10 +3309,10 @@ OMR::Options::processOptionSet(
    }
 
 
-char *
+const char *
 OMR::Options::processOptionSet(
-      char *options,
-      char *envOptions,
+      const char *options,
+      const char *envOptions,
       TR::OptionSet *optionSet)
    {
    TR::Options *jitBase = optionSet ? optionSet->getOptions() : _cmdLineOptions;
@@ -3305,9 +3325,9 @@ OMR::Options::processOptionSet(
    }
 
 
-char *
+const char *
 OMR::Options::processOptionSet(
-      char *options,
+      const char *options,
       TR::OptionSet *optionSet,
       void *jitBase,
       bool isAOT)
@@ -3328,9 +3348,10 @@ OMR::Options::processOptionSet(
          //filter starts with a regular expression
          if (*options == '{')
             {
-            filterHeader = options;
+            filterHeader = (char *)options;
             // Option subset represented by a regular expression
-            endOpt = options;
+            endOpt = (char *)options;
+
 
             methodRegex = TR::SimpleRegex::create(endOpt);
             if (!methodRegex)
@@ -3361,7 +3382,7 @@ OMR::Options::processOptionSet(
          //filter starts with a limitfile linenumber range
          else if (*options == '[')
             {
-            filterHeader = options;
+            filterHeader = (char *)options;
             // Option subset represented by a range (as in limitfile line number)
             int32_t value = 0;
             options++;
@@ -3399,22 +3420,22 @@ OMR::Options::processOptionSet(
             endLine=value;
 
             //assume this is the ending ']';
-            endOpt = options+1;
+            endOpt = (char *)options + 1;
             }
          else if (!strnicmp_ignore_locale(options, EXCLUDED_METHOD_OPTIONS_PREFIX, strlen(EXCLUDED_METHOD_OPTIONS_PREFIX)))
             {
             // Option subset that applies to excluded methods
             //
-            filterHeader = options;
-            endOpt = options + strlen(EXCLUDED_METHOD_OPTIONS_PREFIX);
+            filterHeader = (char *)options;
+            endOpt = (char *)options + strlen(EXCLUDED_METHOD_OPTIONS_PREFIX);
             }
          //filter starts with a limitfile subset index
          else if (*options >= '0' && *options <= '9')
             {
-            filterHeader = options;
+            filterHeader = (char *)options;
             // Option subset represented by an index (used in limitfiles)
             //
-            endOpt = options+1;
+            endOpt = (char *)options + 1;
             }
          }
 
@@ -3425,7 +3446,7 @@ OMR::Options::processOptionSet(
          {
          if (*endOpt != '(')
             return options;
-         char *startOptString = ++endOpt;
+         const char *startOptString = ++endOpt;
          int32_t parenNest = 1;
          for (; *endOpt; endOpt++)
             {
@@ -3484,7 +3505,7 @@ OMR::Options::processOptionSet(
       //
       else
          {
-         endOpt = TR::Options::processOption(options, _jitOptions, jitBase, _numJitEntries, optionSet);
+         endOpt = (char *)TR::Options::processOption(options, _jitOptions, jitBase, _numJitEntries, optionSet);
 
          if (!endOpt)
             {
@@ -3492,7 +3513,7 @@ OMR::Options::processOptionSet(
             return options;
             }
 
-         char *feEndOpt = TR::Options::processOption(options, TR::Options::_feOptions, _feBase, _numVmEntries, optionSet);
+         const char *feEndOpt = TR::Options::processOption(options, TR::Options::_feOptions, _feBase, _numVmEntries, optionSet);
 
          if (!feEndOpt)
             {
@@ -3511,7 +3532,7 @@ OMR::Options::processOptionSet(
             }
 
          if (feEndOpt > endOpt)
-            endOpt = feEndOpt;
+            endOpt = (char *)feEndOpt;
          if (endOpt == options)
             {
             return options; // Unrecognized option
@@ -3535,8 +3556,8 @@ OMR::Options::processOptionSet(
    return options;
    }
 
-char *
-OMR::Options::processOptionSetPostRestore(void *jitConfig, char *options, TR::Options *optBase, bool isAOT)
+const char *
+OMR::Options::processOptionSetPostRestore(void *jitConfig, const char *options, TR::Options *optBase, bool isAOT)
    {
    _postRestoreProcessing = true;
 
@@ -3551,7 +3572,7 @@ OMR::Options::processOptionSetPostRestore(void *jitConfig, char *options, TR::Op
    // Process option sets
    for (TR::OptionSet *optionSet = optBase->_postRestoreOptionSets; optionSet; optionSet = optionSet->getNext())
       {
-      char *subOpts = optionSet->getOptionString();
+      const char *subOpts = optionSet->getOptionString();
 
       TR::Options *newOptions = new (PERSISTENT_NEW) TR::Options(*optBase);
       optionSet->setOptions(newOptions);
@@ -3594,15 +3615,15 @@ OMR::Options::compareOptionsForBinarySearch(const TR::OptionTable &a, const TR::
    return (strnicmp_ignore_locale(a.name, b.name, lengthOfTableEntry) < 0);
    }
 
-char *
+const char *
 OMR::Options::processOption(
-      char *startOption,
+      const char *startOption,
       TR::OptionTable *table,
       void *base,
       int32_t numEntries,
       TR::OptionSet *optionSet)
    {
-   char * option = startOption;
+   const char *option = startOption;
    bool negate = false;
    if (*option == '!')
       {
@@ -3691,7 +3712,7 @@ OMR::Options::processOption(
 
    // Process this entry
    //
-   return processingMethod(option+opt->length, base, opt);
+   return processingMethod(option + opt->length, base, opt);
    }
 
 
@@ -3893,7 +3914,7 @@ void OMR::Options::openLogFile(int32_t idSuffix)
          std::swap(destBuf, otherBuf);
          }
 
-      char *fmodeString = "wb+";
+      const char *fmodeString = "wb+";
       if (self()->getOption(TR_EnablePIDExtension))
          {
          if (!_suffixLogsFormat)
@@ -3954,9 +3975,9 @@ void OMR::Options::closeLogFile(TR_FrontEnd *fe, TR::FILE *file)
 
 
 void
-OMR::Options::printOptions(char *options, char *envOptions)
+OMR::Options::printOptions(const char *options, const char *envOptions)
    {
-   char *optionsType = "JIT";
+   const char *optionsType = "JIT";
    if (this == TR::Options::getAOTCmdLineOptions())
       optionsType = "AOT";
    TR_Debug::dumpOptions(optionsType, options, envOptions, self(), _jitOptions, TR::Options::_feOptions, _feBase, _fe);
@@ -4164,7 +4185,7 @@ OMR::Options::mergePostRestoreOptionSets()
    _postRestoreOptionSets = NULL;
    }
 
-char*
+const char *
 OMR::Options::setCounts()
    {
    if (_countString)
@@ -4466,7 +4487,7 @@ OMR::Options::getInitialHotnessLevel(bool methodHasLoops)
    }
 
 
-char *
+const char *
 OMR::Options::getDefaultCountString()
    {
    TR_ASSERT(this == _jitCmdLineOptions || this == _aotCmdLineOptions, "assertion failure");
@@ -4475,7 +4496,7 @@ OMR::Options::getDefaultCountString()
    //
    bool bcountFirst = false;
 
-   char * str = 0;
+   const char *str = 0;
 
    if (self()->getFixedOptLevel() == -1) // Not a fixed opt level
       {
@@ -4578,11 +4599,12 @@ OMR::Options::getDefaultCountString()
 #pragma report(disable, "CCN6281")
 #endif
 
-char *
-OMR::Options::setCount(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setCount(const char *option, void *base, TR::OptionTable *entry)
    {
    int32_t offset = static_cast<int32_t>(entry->parm1);
-   int32_t countValue = (int32_t)TR::Options::getNumericValue(option);
+   char *tempOption = (char *)option;
+   int32_t countValue = (int32_t)TR::Options::getNumericValue(tempOption);
 
    *((int32_t*)((char*)base+offset)) = countValue;
 
@@ -4706,24 +4728,24 @@ OMR::Options::checkDisableFlagForAllMethods(OMR::Optimizations o, bool b)
    }
 
 
-char *
-OMR::Options::setStaticBool(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setStaticBool(const char *option, void *base, TR::OptionTable *entry)
    {
    *((bool*)entry->parm1) = (entry->parm2 != 0);
    return option;
    }
 
 
-char *
-OMR::Options::setBit(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setBit(const char *option, void *base, TR::OptionTable *entry)
    {
    *((uint32_t*)((char*)base+entry->parm1)) |= entry->parm2;
    return option;
    }
 
 
-char *
-OMR::Options::setAddressEnumerationBits(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setAddressEnumerationBits(const char *option, void *base, TR::OptionTable *entry)
    {
    if (!_debug)
       TR::Options::createDebug();
@@ -4736,7 +4758,9 @@ OMR::Options::setAddressEnumerationBits(char *option, void *base, TR::OptionTabl
       {
       *((int32_t*)((char*)base+entry->parm1)) = 0;  //Reset all bits to zero when this function is called
 
-      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
+      char *tempOption = (char *)option;
+      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
+      option = tempOption;
       if (!regex)
          TR_VerboseLog::writeLine(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4794,8 +4818,8 @@ OMR::Options::TR_OptionStringToBit OMR::Options::_optionStringToBitMapping[] = {
 };
 
 
-char *
-OMR::Options::setBitsFromStringSet(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setBitsFromStringSet(const char *option, void *base, TR::OptionTable *entry)
    {
    int i;
    if (!_debug)
@@ -4809,7 +4833,9 @@ OMR::Options::setBitsFromStringSet(char *option, void *base, TR::OptionTable *en
       {
       *((int32_t*)((char*)base+entry->parm1)) = 0x1; // enable basic tracing is any set is provided
 
-      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
+      char *tempOption = (char *)option;
+      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
+      option = tempOption;
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4830,7 +4856,8 @@ OMR::Options::setBitsFromStringSet(char *option, void *base, TR::OptionTable *en
    }
 
 
-char *OMR::Options::clearBitsFromStringSet(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::clearBitsFromStringSet(const char *option, void *base, TR::OptionTable *entry)
    {
    int i;
 
@@ -4840,7 +4867,9 @@ char *OMR::Options::clearBitsFromStringSet(char *option, void *base, TR::OptionT
       }
    else
       {
-      TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+      char *tempOption = (char *)option;
+      TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+      option = tempOption;
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4862,8 +4891,8 @@ char *OMR::Options::clearBitsFromStringSet(char *option, void *base, TR::OptionT
 
 
 
-char *
-OMR::Options::configureOptReporting(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::configureOptReporting(const char *option, void *base, TR::OptionTable *entry)
    {
    if (!_debug)
       TR::Options::createDebug();
@@ -4877,7 +4906,9 @@ OMR::Options::configureOptReporting(char *option, void *base, TR::OptionTable *e
       case TR_VerboseOptTransformations:
          {
          options->setOption(TR_CountOptTransformations);
-         TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
+         char *tempOption = (char *)option;
+         TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
+         option = tempOption;
          if (!regex)
             TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression --> '%s'", option);
          else
@@ -4895,7 +4926,7 @@ OMR::Options::configureOptReporting(char *option, void *base, TR::OptionTable *e
    }
 
 
-char *OMR::Options::_verboseOptionNames[TR_NumVerboseOptions] =
+const char *OMR::Options::_verboseOptionNames[TR_NumVerboseOptions] =
    {
    "options",
    "compileStart",
@@ -4955,8 +4986,8 @@ char *OMR::Options::_verboseOptionNames[TR_NumVerboseOptions] =
    };
 
 
-char *
-OMR::Options::setVerboseBitsInJitPrivateConfig(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setVerboseBitsInJitPrivateConfig(const char *option, void *base, TR::OptionTable *entry)
    {
 #ifdef J9_PROJECT_SPECIFIC
    TR_JitPrivateConfig *privateConfig = *(TR_JitPrivateConfig**)((char*)_feBase+entry->parm1);
@@ -4969,16 +5000,16 @@ OMR::Options::setVerboseBitsInJitPrivateConfig(char *option, void *base, TR::Opt
    }
 
 
-char *
-OMR::Options::setVerboseBits(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setVerboseBits(const char *option, void *base, TR::OptionTable *entry)
    {
    VerboseOptionFlagArray *verboseOptionFlags = (VerboseOptionFlagArray*)((char*)_feBase+entry->parm1);
    return TR::Options::setVerboseBitsHelper(option, verboseOptionFlags, entry->parm2);
    }
 
 
-char *
-OMR::Options::setVerboseBitsHelper(char *option, VerboseOptionFlagArray *verboseOptionFlags, uintptr_t defaultVerboseFlags)
+const char *
+OMR::Options::setVerboseBitsHelper(const char *option, VerboseOptionFlagArray *verboseOptionFlags, uintptr_t defaultVerboseFlags)
    {
    if (defaultVerboseFlags != 0) // This is used for -Xjit:verbose without any options
       {
@@ -4987,7 +5018,9 @@ OMR::Options::setVerboseBitsHelper(char *option, VerboseOptionFlagArray *verbose
       }
    else // This is used for -Xjit:verbose={}  construct
       {
-      TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+      char *tempOption = (char *)option;
+      TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+      option = tempOption;
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -5025,56 +5058,56 @@ bool OMR::Options::isVerboseFileSet()
    }
 
 
-char *
-OMR::Options::resetBit(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::resetBit(const char *option, void *base, TR::OptionTable *entry)
    {
    *((uint32_t*)((char*)base+entry->parm1)) &= ~entry->parm2;
    return option;
    }
 
 
-char *
-OMR::Options::setValue(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setValue(const char *option, void *base, TR::OptionTable *entry)
    {
    *((intptr_t*)((char*)base+entry->parm1)) = entry->parm2;
    return option;
    }
 
 
-char *
-OMR::Options::set32BitValue(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::set32BitValue(const char *option, void *base, TR::OptionTable *entry)
    {
    *((int32_t*)((char*)base+entry->parm1)) = (int32_t)entry->parm2;
    return option;
    }
 
 
-char *
-OMR::Options::enableOptimization(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::enableOptimization(const char *option, void *base, TR::OptionTable *entry)
    {
    ((TR::Options *)base)->_disabledOptimizations[entry->parm1] = false;
    return option;
    }
 
 
-char *
-OMR::Options::dontTraceOptimization(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::dontTraceOptimization(const char *option, void *base, TR::OptionTable *entry)
    {
    ((TR::Options *)base)->_traceOptimizations[entry->parm1] = false;
    return option;
    }
 
 
-char *
-OMR::Options::disableOptimization(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::disableOptimization(const char *option, void *base, TR::OptionTable *entry)
    {
    ((TR::Options *)base)->_disabledOptimizations[entry->parm1] = true;
    return option;
    }
 
 
-char *
-OMR::Options::traceOptimization(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::traceOptimization(const char *option, void *base, TR::OptionTable *entry)
    {
    ((TR::Options *)base)->_traceOptimizations[entry->parm1] = true;
    ((TR::Options *)base)->_tracingOptimization = true;
@@ -5082,8 +5115,8 @@ OMR::Options::traceOptimization(char *option, void *base, TR::OptionTable *entry
    }
 
 
-char *
-OMR::Options::helpOption(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::helpOption(const char *option, void *base, TR::OptionTable *entry)
    {
    if (!_debug)
       TR::Options::createDebug();
@@ -5099,7 +5132,9 @@ OMR::Options::helpOption(char *option, void *base, TR::OptionTable *entry)
       }
    else
       {
-      nameFilter = _debug ? TR::SimpleRegex::create(option) : 0;
+      char *tempOption = (char *)option;
+      nameFilter = _debug ? TR::SimpleRegex::create(tempOption) : 0;
+      option = tempOption;
       if (!nameFilter)
          return option;
       }
@@ -5112,7 +5147,7 @@ OMR::Options::helpOption(char *option, void *base, TR::OptionTable *entry)
    return option;
    }
 
-char *OMR::Options::_samplingJProfilingOptionNames[TR_NumSamplingJProfilingFlags] =
+const char *OMR::Options::_samplingJProfilingOptionNames[TR_NumSamplingJProfilingFlags] =
    {
    "invokevirtual",
    "invokeinterface",
@@ -5122,9 +5157,12 @@ char *OMR::Options::_samplingJProfilingOptionNames[TR_NumSamplingJProfilingFlags
    "instanceof",
    };
 
-char *OMR::Options::setSamplingJProfilingBits(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::setSamplingJProfilingBits(const char *option, void *base, TR::OptionTable *entry)
    {
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+   char *tempOption = (char *)option;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+   option = tempOption;
 
    if (regex)
       {
@@ -5143,16 +5181,19 @@ char *OMR::Options::setSamplingJProfilingBits(char *option, void *base, TR::Opti
    return option;
    }
 
-char *OMR::Options::_hotFieldReductionAlgorithmNames[TR_NumReductionAlgorithms] =
+const char *
+OMR::Options::_hotFieldReductionAlgorithmNames[TR_NumReductionAlgorithms] =
    {
    "sum",
    "average",
    "max",
    };
 
-char *OMR::Options::setHotFieldReductionAlgorithm(char *option, void *base, TR::OptionTable *entry)
+const char *OMR::Options::setHotFieldReductionAlgorithm(const char *option, void *base, TR::OptionTable *entry)
    {
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
+   char *tempOption = (char *)option;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
+   option = tempOption;
    bool foundMatch = false;
    if (regex)
       {
@@ -5173,8 +5214,8 @@ char *OMR::Options::setHotFieldReductionAlgorithm(char *option, void *base, TR::
    return option;
    }
 
-char *
-OMR::Options::breakOnLoad(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::breakOnLoad(const char *option, void *base, TR::OptionTable *entry)
    {
    TR::Compiler->debug.breakPoint();
    return option;
@@ -5371,7 +5412,8 @@ bool OMR::Options::useCompressedPointers()
    }
 
 
-char *OMR::Options::limitOption(char *option, void *base, TR::OptionTable *entry)
+const char *
+OMR::Options::limitOption(const char *option, void *base, TR::OptionTable *entry)
    {
    // TODO: this is identical to the J9 frontend
    if (!TR::Options::getDebug() && !TR::Options::createDebug())
@@ -5380,7 +5422,8 @@ char *OMR::Options::limitOption(char *option, void *base, TR::OptionTable *entry
    }
 
 
-char *OMR::Options::limitfileOption(char* option, void* base, TR::OptionTable* entry)
+const char *
+OMR::Options::limitfileOption(const char *option, void *base, TR::OptionTable* entry)
    {
    if (!TR::Options::getDebug() && !TR::Options::createDebug())
       return 0;
@@ -5388,7 +5431,8 @@ char *OMR::Options::limitfileOption(char* option, void* base, TR::OptionTable* e
    }
 
 
-char *OMR::Options::inlinefileOption(char* option, void* base, TR::OptionTable* entry)
+const char *
+OMR::Options::inlinefileOption(const char *option, void *base, TR::OptionTable* entry)
    {
    if (!TR::Options::getDebug() && !TR::Options::createDebug())
       return 0;
@@ -5442,7 +5486,8 @@ bool  OMR::Options::fePostProcessJIT(void *base)
    }
 
 
-char *OMR::Options::versionOption(char * option, void * base, TR::OptionTable *entry)
+const char *
+OMR::Options::versionOption(const char *option, void * base, TR::OptionTable *entry)
    {
    fprintf(stdout, "JIT version: %s\n", TR_BUILD_NAME);
    return  option;
