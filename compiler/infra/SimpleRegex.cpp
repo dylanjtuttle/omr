@@ -55,11 +55,11 @@
 namespace TR
 {
 
-SimpleRegex *SimpleRegex::create(char *&s)
+SimpleRegex *SimpleRegex::create(char *& s)
    {
    if (s == NULL || s[0] != '{')
       return NULL;
-   char *origStr = s;
+   const char *origStr = s;
    ++s;
    bool negate = (s[0] == '^');
    if (negate)
