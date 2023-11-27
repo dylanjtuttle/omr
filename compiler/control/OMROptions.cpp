@@ -666,6 +666,7 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
    {"enableAOTStats",                     "O\tenable AOT statistics",                      SET_OPTION_BIT(TR_EnableAOTStats), "F"},
    {"enableApplicationThreadYield",       "O\tinsert yield points in application threads", SET_OPTION_BIT(TR_EnableAppThreadYield), "F", NOT_IN_SUBSET},
    {"enableBasicBlockHoisting",           "O\tenable basic block hoisting",                    TR::Options::enableOptimization, basicBlockHoisting, 0, "P"},
+   {"enableBenefitInliner",               "O\tenable benefit inliner", SET_OPTION_BIT(TR_EnableBenefitInliner), "F"},
    {"enableBlockShuffling",               "O\tenable random rearrangement of blocks",         TR::Options::enableOptimization, blockShuffling, 0, "P"},
    {"enableBranchPreload",                "O\tenable return branch preload for each method (for func testing)",  SET_OPTION_BIT(TR_EnableBranchPreload), "F"},
    {"enableCFGEdgeCounters",              "O\tenable CFG edge counters to keep track of taken and non taken branches in compiled code",      SET_OPTION_BIT(TR_EnableCFGEdgeCounters), "F"},
@@ -1123,6 +1124,7 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
 
    {"tocSize=", "C<nnn>\tnumber of KiloBytes allocated for table of constants",
       TR::Options::setStaticNumeric, (intptr_t)&OMR::Options::_tocSizeInKB, 0, "P%d (KB)", NOT_IN_SUBSET},
+   {"traceAbstractInterpretation",      "L\ttrace benefit inliner abstract interpretation",SET_OPTION_BIT(TR_TraceAbstractInterpretation), "P" },
    {"traceAddAndRemoveEdge",            "L\ttrace edge addition and removal",              SET_OPTION_BIT(TR_TraceAddAndRemoveEdge), "P" },
    {"traceAliases",                     "L\ttrace alias set generation",                   SET_OPTION_BIT(TR_TraceAliases), "P" },
    {"traceAllocationSinking",           "L\ttrace allocation sinking",                     TR::Options::traceOptimization, allocationSinking, 0, "P"},
@@ -1136,6 +1138,8 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
    {"traceBBVA",                        "L\ttrace backward bit vector analysis",           SET_OPTION_BIT(TR_TraceBBVA), "P" },
    {"traceBC",                          "L\tdump bytecodes",                               SET_OPTION_BIT(TR_TraceBC), "P" },
    {"traceBenefitInlinerIDTGen",        "L\ttrace benefit inliner IDT generation",         SET_OPTION_BIT(TR_TraceBIIDTGen), "P" },
+   {"traceBenefitInlinerProposal",      "L\ttrace benefit inliner inlining proposal",      SET_OPTION_BIT(TR_TraceBIProposal), "P" },
+   {"traceBenefitInlinerSummary",       "L\ttrace benefit inliner inlining summary",       SET_OPTION_BIT(TR_TraceBISummary), "P" },
    {"traceBlockFrequencyGeneration",    "L\ttrace block frequency generation",             SET_OPTION_BIT(TR_TraceBFGeneration), "P"},
    {"traceBlockShuffling",              "L\ttrace random rearrangement of blocks",         TR::Options::traceOptimization, blockShuffling, 0, "P"},
    {"traceBlockSplitter",               "L\ttrace block splitter",                         TR::Options::traceOptimization, blockSplitter, 0, "P"},
@@ -1321,7 +1325,7 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
 #endif
 
 int64_t
-OMR::Options::getNumericValue(char *& option)
+OMR::Options::getNumericValue(const char *& option)
    {
    /* The natural way to implement operations might be to recurse to process
     * the right-hand number.  However, in a sequence of operations, that would
@@ -1365,11 +1369,11 @@ OMR::Options::getNumericValue(char *& option)
    }
 
 
-static uintptr_t getHexadecimalValue(char * & option)
+static uintptr_t getHexadecimalValue(const char *& option)
    {
-   uintptr_t value=0;
+   uintptr_t value = 0;
    char *endLocation;
-   value = strtol((const char *)option, &endLocation, 16);
+   value = strtol(option, &endLocation, 16);
    option = endLocation;
    return value;
    }
@@ -3334,8 +3338,8 @@ OMR::Options::processOptionSet(
    {
    while (*options && *options != ')')
       {
-      char *endOpt = NULL;
-      char *filterHeader = NULL;
+      const char *endOpt = NULL;
+      const char *filterHeader = NULL;
       TR::SimpleRegex *methodRegex = NULL, *optLevelRegex = NULL;
       int32_t startLine = 0, endLine = 0;
 
@@ -3351,6 +3355,7 @@ OMR::Options::processOptionSet(
             filterHeader = (char *)options;
             // Option subset represented by a regular expression
             endOpt = (char *)options;
+
 
 
             methodRegex = TR::SimpleRegex::create(endOpt);
@@ -3390,7 +3395,7 @@ OMR::Options::processOptionSet(
             value=0;
             while (isdigit(*options))
                {
-               value = 10*value + *options - '0';
+               value = 10 * value + *options - '0';
                options++;
                }
 
