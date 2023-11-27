@@ -1382,9 +1382,7 @@ static uintptr_t getHexadecimalValue(const char *& option)
 const char *
 OMR::Options::setNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((intptr_t*)((char*)base+entry->parm1)) = (intptr_t)TR::Options::getNumericValue(tempOption);
-   option = tempOption;
+   *((intptr_t*)((char*)base+entry->parm1)) = (intptr_t)TR::Options::getNumericValue(option);
    return option;
    }
 
@@ -1392,9 +1390,7 @@ OMR::Options::setNumeric(const char *option, void *base, TR::OptionTable *entry)
 const char *
 OMR::Options::set32BitNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((int32_t*)((char*)base+entry->parm1)) = (int32_t)TR::Options::getNumericValue(tempOption);
-   option = tempOption;
+   *((int32_t*)((char*)base+entry->parm1)) = (int32_t)TR::Options::getNumericValue(option);
    return option;
    }
 
@@ -1415,9 +1411,7 @@ OMR::Options::set64BitSignedNumeric(const char *option, void *base, TR::OptionTa
       sign = -1;
       option++;
       }
-   char *tempOption = (char *)option;
-   *((int64_t*)((char*)base+entry->parm1)) = sign * TR::Options::getNumericValue(tempOption);
-   option = tempOption;
+   *((int64_t*)((char*)base+entry->parm1)) = sign * TR::Options::getNumericValue(option);
    return option;
    }
 
@@ -1425,9 +1419,7 @@ OMR::Options::set64BitSignedNumeric(const char *option, void *base, TR::OptionTa
 const char *
 OMR::Options::set32BitHexadecimal(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((int32_t*)((char*)base+entry->parm1)) = static_cast<int32_t>(getHexadecimalValue(tempOption));
-   option = tempOption;
+   *((int32_t*)((char*)base+entry->parm1)) = static_cast<int32_t>(getHexadecimalValue(option));
    return option;
    }
 
@@ -1441,9 +1433,7 @@ OMR::Options::set32BitSignedNumeric(const char *option, void *base, TR::OptionTa
       sign = -1;
       option++;
       }
-   char *tempOption = (char *)option;
-   *((int32_t*)((char*)base+entry->parm1)) = sign * static_cast<int32_t>(TR::Options::getNumericValue(tempOption));
-   option = tempOption;
+   *((int32_t*)((char*)base+entry->parm1)) = sign * static_cast<int32_t>(TR::Options::getNumericValue(option));
    return option;
    }
 
@@ -1451,9 +1441,7 @@ OMR::Options::set32BitSignedNumeric(const char *option, void *base, TR::OptionTa
 const char *
 OMR::Options::setStaticNumeric(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((int32_t*)entry->parm1) = (int32_t)TR::Options::getNumericValue(tempOption);
-   option = tempOption;
+   *((int32_t*)entry->parm1) = (int32_t)TR::Options::getNumericValue(option);
    return option;
    }
 
@@ -1461,9 +1449,7 @@ OMR::Options::setStaticNumeric(const char *option, void *base, TR::OptionTable *
 const char *
 OMR::Options::setStaticNumericKBAdjusted(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((size_t*)entry->parm1) = (size_t) (TR::Options::getNumericValue(tempOption) * 1024);
-   option = tempOption;
+   *((size_t*)entry->parm1) = (size_t) (TR::Options::getNumericValue(option) * 1024);
    return option;
    }
 
@@ -1471,9 +1457,7 @@ OMR::Options::setStaticNumericKBAdjusted(const char *option, void *base, TR::Opt
 const char *
 OMR::Options::setStaticHexadecimal(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   *((uintptr_t*)entry->parm1) = getHexadecimalValue(tempOption);
-   option = tempOption;
+   *((uintptr_t*)entry->parm1) = getHexadecimalValue(option);
    return option;
    }
 
@@ -1588,9 +1572,7 @@ OMR::Options::setDebug(const char *option, void *base, TR::OptionTable *entry)
 const char *
 OMR::Options::setRegex(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-   option = tempOption;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
    *((TR::SimpleRegex**)((char*)base+entry->parm1)) = regex;
    if (!regex)
       TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE,"Bad regular expression at --> '%s'", option);
@@ -1601,9 +1583,7 @@ OMR::Options::setRegex(const char *option, void *base, TR::OptionTable *entry)
 const char *
 OMR::Options::setStaticRegex(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-   option = tempOption;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
    *((TR::SimpleRegex**)entry->parm1) = regex;
    if (!regex)
       TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
@@ -4608,8 +4588,7 @@ const char *
 OMR::Options::setCount(const char *option, void *base, TR::OptionTable *entry)
    {
    int32_t offset = static_cast<int32_t>(entry->parm1);
-   char *tempOption = (char *)option;
-   int32_t countValue = (int32_t)TR::Options::getNumericValue(tempOption);
+   int32_t countValue = (int32_t)TR::Options::getNumericValue(option);
 
    *((int32_t*)((char*)base+offset)) = countValue;
 
@@ -4763,9 +4742,7 @@ OMR::Options::setAddressEnumerationBits(const char *option, void *base, TR::Opti
       {
       *((int32_t*)((char*)base+entry->parm1)) = 0;  //Reset all bits to zero when this function is called
 
-      char *tempOption = (char *)option;
-      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
-      option = tempOption;
+      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
       if (!regex)
          TR_VerboseLog::writeLine(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4838,9 +4815,7 @@ OMR::Options::setBitsFromStringSet(const char *option, void *base, TR::OptionTab
       {
       *((int32_t*)((char*)base+entry->parm1)) = 0x1; // enable basic tracing is any set is provided
 
-      char *tempOption = (char *)option;
-      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
-      option = tempOption;
+      TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4872,9 +4847,7 @@ OMR::Options::clearBitsFromStringSet(const char *option, void *base, TR::OptionT
       }
    else
       {
-      char *tempOption = (char *)option;
-      TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-      option = tempOption;
+      TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -4911,9 +4884,7 @@ OMR::Options::configureOptReporting(const char *option, void *base, TR::OptionTa
       case TR_VerboseOptTransformations:
          {
          options->setOption(TR_CountOptTransformations);
-         char *tempOption = (char *)option;
-         TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(tempOption) : 0;
-         option = tempOption;
+         TR::SimpleRegex * regex = _debug ? TR::SimpleRegex::create(option) : 0;
          if (!regex)
             TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression --> '%s'", option);
          else
@@ -5023,9 +4994,7 @@ OMR::Options::setVerboseBitsHelper(const char *option, VerboseOptionFlagArray *v
       }
    else // This is used for -Xjit:verbose={}  construct
       {
-      char *tempOption = (char *)option;
-      TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-      option = tempOption;
+      TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
       if (!regex)
          TR_VerboseLog::writeLineLocked(TR_Vlog_FAILURE, "Bad regular expression at --> '%s'", option);
       else
@@ -5137,9 +5106,7 @@ OMR::Options::helpOption(const char *option, void *base, TR::OptionTable *entry)
       }
    else
       {
-      char *tempOption = (char *)option;
-      nameFilter = _debug ? TR::SimpleRegex::create(tempOption) : 0;
-      option = tempOption;
+      nameFilter = _debug ? TR::SimpleRegex::create(option) : 0;
       if (!nameFilter)
          return option;
       }
@@ -5165,9 +5132,7 @@ const char *OMR::Options::_samplingJProfilingOptionNames[TR_NumSamplingJProfilin
 const char *
 OMR::Options::setSamplingJProfilingBits(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-   option = tempOption;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
 
    if (regex)
       {
@@ -5196,9 +5161,7 @@ OMR::Options::_hotFieldReductionAlgorithmNames[TR_NumReductionAlgorithms] =
 
 const char *OMR::Options::setHotFieldReductionAlgorithm(const char *option, void *base, TR::OptionTable *entry)
    {
-   char *tempOption = (char *)option;
-   TR::SimpleRegex * regex = TR::SimpleRegex::create(tempOption);
-   option = tempOption;
+   TR::SimpleRegex * regex = TR::SimpleRegex::create(option);
    bool foundMatch = false;
    if (regex)
       {
