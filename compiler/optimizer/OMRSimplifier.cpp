@@ -542,6 +542,14 @@ OMR::Simplifier::simplify(TR::Node * node, TR::Block * block)
    // simplifying its children.
    //
    preSimplification(node);
+   switch (node->getOpCodeValue()) {
+      case TR::ificmpge:
+         printf("\n\nOpCodeValue: ificmpge\n\n");
+         break;
+      case TR::ificmpne:
+         printf("\n\nOpCodeValue: ificmpne\n\n");
+         break;
+   }
    TR::Node * newNode = simplifierOpts[node->getOpCodeValue()](node, block, (TR::Simplifier *) this);
    if (newNode)
       postSimplification(newNode);
