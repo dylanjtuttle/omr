@@ -549,6 +549,8 @@ OMR::Simplifier::simplify(TR::Node * node, TR::Block * block)
       case TR::ificmpne:
          printf("\n\nOpCodeValue: ificmpne\n\n");
          break;
+      default:
+         break;
    }
    TR::Node * newNode = simplifierOpts[node->getOpCodeValue()](node, block, (TR::Simplifier *) this);
    if (newNode)
