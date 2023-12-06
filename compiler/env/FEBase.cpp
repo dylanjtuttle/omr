@@ -95,13 +95,16 @@ char *feGetEnv(const char *s)
 #include "control/Options.hpp"
 #include "control/Options_inlines.hpp"
 
-#if defined(LINUX)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Winvalid-offsetof"
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(disable, "CCN1281")
+// #pragma report(disable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(disable, "CCN6281")
 #endif
 
@@ -123,11 +126,14 @@ TR::OptionTable OMR::Options::_feOptions[] =
    {0}
    };
 
-#if defined(LINUX)
-#pragma GCC diagnostic pop
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic pop
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(enable, "CCN1281")
+// #pragma report(enable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(enable, "CCN6281")
 #endif
 

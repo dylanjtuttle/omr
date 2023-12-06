@@ -60,8 +60,32 @@
 
 using namespace OMR;
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(disable, "CCN1281")
+// #pragma report(disable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
+#pragma report(disable, "CCN6281")
+#endif
+
 #define SET_OPTION_BIT(x)   TR::Options::setBit,   offsetof(OMR::Options,_options[(x)&TR_OWM]), (static_cast<uintptr_t>((x)&~TR_OWM))
 #define RESET_OPTION_BIT(x) TR::Options::resetBit, offsetof(OMR::Options,_options[(x)&TR_OWM]), (static_cast<uintptr_t>((x)&~TR_OWM))
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(enable, "CCN1281")
+// #pragma report(enable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
+#pragma report(enable, "CCN6281")
+#endif
 
 #define NoOptString                     "noOpt"
 #define DisableAllocationInliningString "disableAllocationInlining"
@@ -94,13 +118,16 @@ using namespace OMR;
 
 static char * EXCLUDED_METHOD_OPTIONS_PREFIX = "ifExcluded";
 
-#if defined(LINUX)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Winvalid-offsetof"
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(disable, "CCN1281")
+// #pragma report(disable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(disable, "CCN6281")
 #endif
 
@@ -1316,11 +1343,14 @@ TR::OptionTable OMR::Options::_jitOptions[] = {
    {NULL}
 };
 
-#if defined(LINUX)
-#pragma GCC diagnostic pop
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic pop
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(enable, "CCN1281")
+// #pragma report(enable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(enable, "CCN6281")
 #endif
 
@@ -4572,13 +4602,16 @@ OMR::Options::getDefaultCountString()
    return p;
    }
 
-#if defined(LINUX)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Winvalid-offsetof"
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(disable, "CCN1281")
+// #pragma report(disable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(disable, "CCN6281")
 #endif
 
@@ -4622,11 +4655,14 @@ OMR::Options::setCount(char *option, void *base, TR::OptionTable *entry)
    return option;
    }
 
-#if defined(LINUX)
-#pragma GCC diagnostic pop
-#elif defined(OSX)
+#if defined(__clang__)
 #pragma clang diagnostic pop
-#elif defined(AIXPPC) || defined(J9ZOS390)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__ibmxl__) && defined(TR_TARGET_POWER)
+#pragma report(enable, "CCN1281")
+// #pragma report(enable, "CCN287")
+#elif defined(__ibmxl__) && defined(J9ZOS390)
 #pragma report(enable, "CCN6281")
 #endif
 
