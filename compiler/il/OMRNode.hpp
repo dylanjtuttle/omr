@@ -813,19 +813,41 @@ public:
     * @brief Sets a known object index on this node
     * @param[in] koi : the known object index
     */
-   void setKnownObjectIndex(TR::KnownObjectTable::Index koi) { _knownObjectIndex = koi; }
+   void setKnownObjectIndex(TR::KnownObjectTable::Index koi)
+      {
+      TR_ASSERT_FATAL(
+         (koi == TR::KnownObjectTable::UNKNOWN) || (getSymbolReference() != NULL) || (getOpCodeValue() == TR::l2a) || (getOpCodeValue() == TR::aload),
+         "Setting known object index for a Node %s that has no symref",
+         getOpCode().getName()
+      );
+      _knownObjectIndex = koi;
+      }
 
    /**
     * @brief Retrieve the known object index associated with this node, if any.
     * @return Known object index, or TR::KnownObjectTable::UNKNOWN if none.
     */
-   TR::KnownObjectTable::Index getKnownObjectIndex() { return _knownObjectIndex; }
+   TR::KnownObjectTable::Index getKnownObjectIndex()
+      {
+      TR_ASSERT_FATAL(
+         (_knownObjectIndex == TR::KnownObjectTable::UNKNOWN) || (getSymbolReference() != NULL) || (getOpCodeValue() == TR::l2a),
+         "Node with a known object index that has no symref"
+      );
+      return _knownObjectIndex;
+      }
 
    /**
     * @brief Inquires whether this node has a known object index associated with it.
     * @return true if a known object index is cached; false otherwise.
     */
-   bool hasKnownObjectIndex() { return _knownObjectIndex != TR::KnownObjectTable::UNKNOWN; }
+   bool hasKnownObjectIndex()
+      {
+      TR_ASSERT_FATAL(
+         (_knownObjectIndex == TR::KnownObjectTable::UNKNOWN) || (getSymbolReference() != NULL) || (getOpCodeValue() == TR::l2a),
+         "Node with a known object index that has no symref"
+      );
+      return _knownObjectIndex != TR::KnownObjectTable::UNKNOWN;
+      }
 
    inline scount_t getFutureUseCount();
    inline scount_t setFutureUseCount(scount_t li);
